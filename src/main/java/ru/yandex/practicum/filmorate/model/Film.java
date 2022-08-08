@@ -1,8 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.validator.ReleaseDate;
 
@@ -11,9 +9,14 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Validated
-@Getter @Setter
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
 public class Film {
     private Long id;
     @NotEmpty(message = "name is not correct")
@@ -24,4 +27,5 @@ public class Film {
     private LocalDate releaseDate;
     @Positive(message = "duration is not correct")
     private Long duration;
+    private Set<Long> listLikes = new HashSet<>();
 }
