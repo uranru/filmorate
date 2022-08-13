@@ -270,5 +270,4 @@ public class FilmStorageDb implements FilmStorageInterface {
                 .name(resultSet.getString("genre_name"))
                 .build();
     }
-
 }
