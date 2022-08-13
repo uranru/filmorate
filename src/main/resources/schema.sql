@@ -1,12 +1,12 @@
 
 --- Чистка
-DROP TABLE films_genres;
-DROP TABLE users_friends;
-DROP TABLE films_favorite;
-DROP TABLE films;
-DROP TABLE users;
-DROP TABLE genres;
-DROP TABLE mpa;
+DROP TABLE IF EXISTS films_genres;
+DROP TABLE IF EXISTS users_friends;
+DROP TABLE IF EXISTS films_favorite;
+DROP TABLE IF EXISTS films;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS genres;
+DROP TABLE IF EXISTS mpa;
 
 --- Таблица рейтингов фильмов
 CREATE TABLE IF NOT EXISTS mpa (

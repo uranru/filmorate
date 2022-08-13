@@ -1,8 +1,10 @@
 package ru.yandex.practicum.filmorate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -14,16 +16,11 @@ import ru.yandex.practicum.filmorate.model.User;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-/*
-UserControllerTestMvc
-User person = new User();
-        person.setEmail("test@test.ru");
-        person.setLogin("test");
-*/
-
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
+@AutoConfigureTestDatabase
 public class UserControllerFriendsTestMvc {
     @Autowired
     private MockMvc mvc;
@@ -39,43 +36,37 @@ public class UserControllerFriendsTestMvc {
         }
     }
 
-    /*
+
     // Проверка добавления в друзья
     @Test
     public void UsersTest() throws Exception   {
 
         // Добавляем трех пользователей
-        User newUser01 = new User();
-        newUser01.setEmail("test@test.ru");
-        newUser01.setLogin("test");
-
+        String stringJson = "{\"email\": \"test@test.ru\",\"login\": \"test\",\"name\": \"test1\",\"birthday\": \"2002-06-28\"}";
         mvc.perform( MockMvcRequestBuilders
                 .post("/users")
-                .content(asJsonString(newUser01))
+                .content(stringJson)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
             .andDo(print())
             .andExpect(status().isOk());
 
-        User newUser02 = new User();
-        newUser02.setEmail("test2@test.ru");
-        newUser02.setLogin("test2");
+
+        String stringJson2 = "{\"email\": \"test2@test.ru\",\"login\": \"test2\",\"name\": \"test2\",\"birthday\": \"2002-06-28\"}";
 
         mvc.perform( MockMvcRequestBuilders
                         .post("/users")
-                        .content(asJsonString(newUser02))
+                        .content(stringJson2)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        User newUser03 = new User();
-        newUser03.setEmail("test3@test.ru");
-        newUser03.setLogin("test3");
+        String stringJson3 = "{\"email\": \"test3@test.ru\",\"login\": \"test3\",\"name\": \"test3\",\"birthday\": \"2002-06-28\"}";
 
         mvc.perform( MockMvcRequestBuilders
                         .post("/users")
-                        .content(asJsonString(newUser03))
+                        .content(stringJson3)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -119,6 +110,5 @@ public class UserControllerFriendsTestMvc {
     }
 
 
-*/
 
 }
