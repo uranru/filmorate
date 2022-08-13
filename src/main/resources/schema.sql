@@ -1,3 +1,13 @@
+
+--- Чистка
+DROP TABLE films_genres;
+DROP TABLE users_friends;
+DROP TABLE films_favorite;
+DROP TABLE films;
+DROP TABLE users;
+DROP TABLE genres;
+DROP TABLE mpa;
+
 --- Таблица рейтингов фильмов
 CREATE TABLE IF NOT EXISTS mpa (
     mpa_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,

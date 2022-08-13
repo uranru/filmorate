@@ -1,4 +1,5 @@
 
+
 --- заполняем таблицу с рейтингами
 INSERT INTO mpa (MPA_NAME) VALUES ('G');
 INSERT INTO mpa (MPA_NAME) VALUES ('PG');
