@@ -1,4 +1,4 @@
-/*
+
 --- заполняем таблицу с рейтингами
 INSERT INTO mpa (MPA_NAME) VALUES ('G');
 INSERT INTO mpa (MPA_NAME) VALUES ('PG');
@@ -13,4 +13,3 @@ INSERT INTO genres (GENRE_NAME) VALUES ('Мультфильм');
 INSERT INTO genres (GENRE_NAME) VALUES ('Триллер');
 INSERT INTO genres (GENRE_NAME) VALUES ('Документальный');
 INSERT INTO genres (GENRE_NAME) VALUES ('Боевик');
-*/
