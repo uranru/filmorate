@@ -37,7 +37,7 @@ public class MpaStorageDb implements MpaStorageInterface {
     public List<Mpa> findAllMpa() {
         return jdbcTemplate.query("" +
                       "SELECT mpa_id, mpa_name  " +
-                      "FROM MPA;",
+                      "FROM MPA ORDER BY mpa_id ASC;",
                   this::mapRowToMpa);
     }
 

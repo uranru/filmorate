@@ -39,7 +39,7 @@ public class GenreStorageDb implements GenreStorageInterface {
     public List<Genre> findAllGenres() {
         return jdbcTemplate.query("" +
                         "SELECT genre_id, genre_name  " +
-                        "FROM GENRES;",
+                        "FROM GENRES ORDER BY genre_id ASC;",
                 this::mapRowToGenre);
     }
 
