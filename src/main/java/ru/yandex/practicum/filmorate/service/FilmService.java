@@ -2,85 +2,39 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+import ru.yandex.practicum.filmorate.dao.FilmStorageDb;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
-import java.util.*;
+import java.util.List;
 
 @Service
 @Qualifier("films")
-public class FilmService implements UniversalServiceInterface{
-    private final InMemoryFilmStorage filmStorage;
-    private final InMemoryUserStorage userStorage;
+public class FilmService {
+
+    private final FilmStorageDb filmStorage;
 
     @Autowired
-    public FilmService(InMemoryFilmStorage filmStorage, InMemoryUserStorage userStorage) {
-        this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
+    public FilmService(FilmStorageDb storage) {
+        this.filmStorage = storage;
     }
 
-    public List<Film> findAllObjects() {
-        return filmStorage.findAllObjects();
+    public Film addFilm(Film film) {
+        Film newFilm = filmStorage.addFilm(film);
+        return newFilm;
     }
 
-    public Film findObject(Long id) { return (Film) filmStorage.findObject(id); }
+    public Film findFilmById(Long filmId){ return filmStorage.findFilmById(filmId); }
 
-    public void createObject(Film object) { filmStorage.createObject(object); }
+    public List<Film> findAllFilms() { return filmStorage.findAllFilms(); }
 
-    public void updateObject(Film object) { filmStorage.updateObject(object); }
+    public List<Film> findPopularFilms(Integer filmsCount){ return filmStorage.findPopularFilms(filmsCount); }
 
-    public void addLike(Long filmId, Long userId){
-        User user = userStorage.findObject(userId);
-        Film film = filmStorage.findObject(filmId);
+    public void deleteFilmById(Long filmId){ filmStorage.deleteFilmById(filmId); }
 
-        Set<Long> listLikes;
-        if (film.getListLikes() != null) {
-            listLikes = film.getListLikes();
-        } else {
-            listLikes = new HashSet<>();
-        }
-        listLikes.add(userId);
-        film.setListLikes(listLikes);
-        filmStorage.updatePopularFilm();
-    }
+    public Film updateFilm(Film film) { return filmStorage.updateFilm(film); }
 
-    public List<Film> findPopularFilms(Long count) {
-        List<Film> listFilms = new ArrayList<>();
+    public void addLike(Long filmId, Long userId) { filmStorage.addLike(filmId,userId); }
 
-        if (count == null) {
-            count = 10L;
-        }
-        if (count > filmStorage.getListPopularFilms().size()) {
-            count = Long.valueOf(filmStorage.getListPopularFilms().size());
-        }
-
-        int i = 0;
-        Iterator<Film> iter = filmStorage.getListPopularFilms().iterator();
-        while (i < count.intValue() && iter.hasNext()) {
-            Film f = iter.next();
-            listFilms.add(f);
-            i++;
-        }
-
-        return listFilms;
-    }
-
-    public void deleteLike(Long filmId, Long userId) {
-        User user = userStorage.findObject(userId);
-        Film film = filmStorage.findObject(filmId);
-
-        Set<Long> listLikes;
-        if (film.getListLikes() != null) {
-            listLikes = film.getListLikes();
-
-            listLikes.remove(userId);
-            film.setListLikes(listLikes);
-            filmStorage.updatePopularFilm();
-        }
-    }
+    public void deleteLike(Long filmId, Long userId) { filmStorage.deleteLike(filmId,userId); }
 }

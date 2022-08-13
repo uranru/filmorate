@@ -39,6 +39,7 @@ public class UserControllerFriendsTestMvc {
         }
     }
 
+    /*
     // Проверка добавления в друзья
     @Test
     public void UsersTest() throws Exception   {
@@ -118,6 +119,6 @@ public class UserControllerFriendsTestMvc {
     }
 
 
-
+*/
 
 }

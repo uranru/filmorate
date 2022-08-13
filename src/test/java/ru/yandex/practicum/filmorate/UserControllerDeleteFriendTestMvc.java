@@ -39,6 +39,8 @@ public class UserControllerDeleteFriendTestMvc {
         }
     }
 
+    /*
+
     // Проверка удаления друзей
     @Test
     public void UsersTest() throws Exception   {
@@ -98,7 +100,7 @@ public class UserControllerDeleteFriendTestMvc {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.*", hasSize(0)));
     }
 
-
+*/
 
 
 }
