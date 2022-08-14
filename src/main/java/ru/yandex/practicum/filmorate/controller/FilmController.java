@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryUniversalStorage;
 
 
 import javax.validation.Valid;
@@ -24,61 +22,70 @@ import java.util.List;
 @Qualifier("films")
 public class FilmController {
     private final Logger log = LoggerFactory.getLogger(FilmController.class);
-    private final FilmService service;
+    private final FilmService filmService;
 
     @Autowired
     public FilmController(FilmService service) {
-        this.service = service;
+        this.filmService = service;
     }
 
     @GetMapping("")
-    public List<Film> findAllObjects() {
-        List<Film> allObjects = service.findAllObjects();
+    public List<Film> findAllFilms() {
+        List<Film> allObjects = filmService.findAllFilms();
         log.info("Запрошен список всех объектов. Текущее количество объектов: {}",allObjects.size());
         return allObjects;
     }
 
-    @GetMapping("/{id}")
-    public Film findObject(@PathVariable Long id) {
-        Film object = (Film) service.findObject(id);
-        log.info("Запрошен объект: {}",object);
-        return object;
+    @GetMapping("/{filmId}")
+    public Film findFilmById(@PathVariable Long filmId) {
+        Film film = filmService.findFilmById(filmId);
+        log.info("Запрошен фильм: {}",film);
+        return film;
     }
 
     @PostMapping(value = "")
-    public Film createObject(@Valid @RequestBody Film object) {
-        service.createObject(object);
-        log.info("Добавлен новый объект: {}",object);
-        return object;
+    public Film addFilm(@Valid @RequestBody Film film) {
+        Film newFilm = filmService.addFilm(film);
+        log.info("Добавлен новый объект: {}",newFilm);
+        return newFilm;
+    }
+
+    @DeleteMapping("/{filmId}")
+    public ResponseEntity<User> deleteFilmById(@PathVariable @Valid @RequestBody Long filmId) {
+        filmService.deleteFilmById(filmId);
+        log.info("Удален пользователь с ID {}", filmId);
+        return new ResponseEntity<>(HttpStatus.resolve(200));
     }
 
     @PutMapping(value = "")
-    public Film updateObject(@Valid @RequestBody Film object) {
-        service.updateObject(object);
-        log.info("Изменен объект: {}",object);
-        return object;
+    public Film updateFilm(@Valid @RequestBody Film film) {
+        Film filmReturn = filmService.updateFilm(film);
+        log.info("Изменен объект: {}",filmReturn);
+        return filmReturn;
     }
 
-    @PutMapping("/{id}/like/{userId}")
-    public ResponseEntity<Object> addLike(@PathVariable @Valid @RequestBody Long id, @PathVariable @Valid @RequestBody Long userId) {
-        service.addLike(id,userId);
-        log.info("Пользователь с ID {} поставил лайк фильму с ID {}",userId,id);
+    @PutMapping("/{filmId}/like/{userId}")
+    public ResponseEntity<Object> addLike(@PathVariable @Valid @RequestBody Long filmId, @PathVariable @Valid @RequestBody Long userId) {
+        filmService.addLike(filmId,userId);
+        log.info("Пользователь с ID {} поставил лайк фильму с ID {}",userId, filmId);
 
         return new ResponseEntity<>(HttpStatus.resolve(200));
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public ResponseEntity<Object> deleteLike(@PathVariable @Valid @RequestBody Long id, @PathVariable @Valid @RequestBody Long userId) {
-        service.deleteLike(id,userId);
+        filmService.deleteLike(id,userId);
         log.info("Пользователь с ID {} удалил лайк фильму с ID {}",userId,id);
         return new ResponseEntity<>(HttpStatus.resolve(200));
     }
 
     @GetMapping("/popular")
-    public List<Film> findPopularFilms(@RequestParam(required = false) Long count) {
-        List<Film> listFilms = service.findPopularFilms(count);
+    public List<Film> findPopularFilms(@RequestParam(defaultValue = "10") String count) {
         log.debug("Запрошен список {} наиболее популярных фильмов",count);
+        List<Film> listFilms = filmService.findPopularFilms(Integer.valueOf(count));
         return listFilms;
     }
+
+
 }
 

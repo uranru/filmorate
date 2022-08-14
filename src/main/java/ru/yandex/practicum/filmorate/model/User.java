@@ -16,15 +16,15 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
+@Builder
 public class User {
     private Long id;
-
-    @Email
-    private String email;
     @NotEmpty
     @Login
     private String login;
     private String name;
+    @Email
+    private String email;
     @Past
     private LocalDate birthday;
     private Set<Long> listFriends;

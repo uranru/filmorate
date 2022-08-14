@@ -2,130 +2,83 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import ru.yandex.practicum.filmorate.dao.UserStorageDb;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
 
 @Service
 @Qualifier("users")
-public class UserService implements UniversalServiceInterface{
-    private final InMemoryUserStorage storage;
+public class UserService {
+    private final UserStorageDb userStorage;
 
     @Autowired
-    public UserService(InMemoryUserStorage storage) {
-        this.storage = storage;
+    public UserService(UserStorageDb storage) {
+        this.userStorage = storage;
+    }
+
+    public User findUserById(Long id) {
+        try {
+            return userStorage.findUserById(id);
+        } catch (Exception exception) {
+            throw new ResponseStatusException(
+                 HttpStatus.resolve(404), "");
+        }
     }
 
     public List<User> findAllObjects() {
-        return storage.findAllObjects();
+        return userStorage.findAllUsers();
     }
 
-    public Object findObject(Long id) {
-        return storage.findObject(id);
-    }
-
-    public void createObject(User object) {
-        storage.createObject(object);
-    }
-
-    public void updateObject(User object) {
-        storage.updateObject(object);
-    }
-
-    public void addFriend(Long id, Long friendId){
-        User user;
-        User friend;
-        try {
-            user = storage.findObject(id);
-            friend = storage.findObject(friendId);
-
-            Set<Long> userListFriends;
-            if (user.getListFriends() != null) {
-                userListFriends = user.getListFriends();
-            } else {
-                userListFriends = new HashSet<>();
-            }
-            userListFriends.add(friendId);
-            user.setListFriends(userListFriends);
-
-            Set<Long> friendListFriends;
-            if (friend.getListFriends() != null) {
-                friendListFriends = friend.getListFriends();
-            } else {
-                friendListFriends = new HashSet<>();
-            }
-            friendListFriends.add(id);
-            friend.setListFriends(friendListFriends);
-        } catch (NullPointerException e) {
+    public User addUser(User user) {
+        incomingObjectValidation(user);
+        if (userStorage.addUser(user) > 0) {
+            return userStorage.findUserByLogin(user.getLogin());
+        } else {
             throw new ResponseStatusException(
-                    HttpStatus.resolve(404), "User not Found");
+                    HttpStatus.resolve(400), "");
         }
     }
 
-    public List<User> findFriends(Long id){
-        List<User> ListCommonFriends = new ArrayList<>();
-        User user = storage.findObject(id);
-        Set<Long> userListFriends;
-
-        if (user.getListFriends() == null) {
-            return ListCommonFriends;
+    public User updateObject(User user) {
+        if (userStorage.updateUser(user) > 0) {
+            return userStorage.findUserByLogin(user.getLogin());
         } else {
-            userListFriends = user.getListFriends();
+            throw new ResponseStatusException(
+                    HttpStatus.resolve(404), "");
         }
-
-        for (Long idCommonFriend: userListFriends) {
-            ListCommonFriends.add(storage.findObject(idCommonFriend));
-        }
-
-        return ListCommonFriends;
     }
-
-    public List<User> findCommonFriends(Long id,Long friendId) {
-        List<User> ListCommonFriends = new ArrayList<>();
-        User user = storage.findObject(id);
-        User friend = storage.findObject(friendId);
-        Set<Long> userListFriends;
-        Set<Long> friendListFriends;
-
-        if (user.getListFriends() == null) {
-            return ListCommonFriends;
-        } else {
-            userListFriends = user.getListFriends();
-        }
-        if (friend.getListFriends() == null) {
-            return ListCommonFriends;
-        } else {
-            friendListFriends = friend.getListFriends();
-        }
-
-        for (Long idCommonFriend: userListFriends) {
-            if (friendListFriends.contains(idCommonFriend)) {
-                ListCommonFriends.add(storage.findObject(idCommonFriend));
-            }
-        }
-
-        return ListCommonFriends;
-    }
-
-    public void deleteFriend(Long id, Long friendId){
-        List<User> ListCommonFriends = new ArrayList<>();
-        User user = storage.findObject(id);
-        User friend = storage.findObject(friendId);
-
-        if (user.getListFriends() != null)  {
-            user.getListFriends().remove(friendId);
-        }
-        if (friend.getListFriends() != null) {
-            friend.getListFriends().remove(id);
+    public void deleteObjectById(Long id) {
+        if (userStorage.deleteUserById(id) == 0) {
+            throw new ResponseStatusException(
+                    HttpStatus.resolve(400), "");
         }
     }
 
+    public void addFriend(Long userId, Long friendId){
+        try {
+            userStorage.addFriend(userId,friendId);
+        }   catch (Exception exception) {
+                throw new ResponseStatusException(
+                    HttpStatus.resolve(404), "");
+        }
+    }
+
+    public List<User> findFriends(Long userId){
+        return userStorage.findFriends(userId);
+    }
+
+    public List<User> findCommonFriends(Long userId, Long friendId) { return userStorage.findCommonFriends(userId,friendId);}
+
+    public void deleteFriend(Long userId, Long friendId){ userStorage.deleteFriend(userId, friendId); }
+
+    private void incomingObjectValidation(User user){
+        if (user.getName() == null || user.getName().isEmpty()) {
+            user.setName(user.getLogin());
+        }
+    }
 }
