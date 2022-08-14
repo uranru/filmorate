@@ -57,12 +57,11 @@ public class FilmController {
         return new ResponseEntity<>(HttpStatus.resolve(200));
     }
 
-
     @PutMapping(value = "")
     public Film updateFilm(@Valid @RequestBody Film film) {
-        filmService.updateFilm(film);
-        log.info("Изменен объект: {}",film);
-        return film;
+        Film filmReturn = filmService.updateFilm(film);
+        log.info("Изменен объект: {}",filmReturn);
+        return filmReturn;
     }
 
     @PutMapping("/{filmId}/like/{userId}")
@@ -81,9 +80,9 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public List<Film> findPopularFilms(@RequestParam(required = false) Integer count) {
+    public List<Film> findPopularFilms(@RequestParam(defaultValue = "10") String count) {
         log.debug("Запрошен список {} наиболее популярных фильмов",count);
-        List<Film> listFilms = filmService.findPopularFilms(count);
+        List<Film> listFilms = filmService.findPopularFilms(Integer.valueOf(count));
         return listFilms;
     }
 

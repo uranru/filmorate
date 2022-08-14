@@ -12,19 +12,19 @@ public interface UserStorageInterface {
 
     User findUserByLogin(String userLogin);
 
-    User addUser(User newUser);
+    Integer addUser(User newUser);
 
-    User updateUser(User object);
+    Integer updateUser(User object);
 
-    void deleteUserById(Long userId);
+    Integer deleteUserById(Long userId);
 
-    void addFriend(Long userId, Long friendId);
+    Integer addFriend(Long userId, Long friendId);
 
     List<User> findFriends(Long userId);
 
     List<User> findCommonFriends(Long userId,Long friendId);
 
-    void deleteFriend(Long userId, Long friendId);
+    Integer deleteFriend(Long userId, Long friendId);
     //Long generateId();
 
     public List<User> viewListObjects();

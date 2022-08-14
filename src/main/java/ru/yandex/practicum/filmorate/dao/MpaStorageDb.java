@@ -21,17 +21,11 @@ public class MpaStorageDb implements MpaStorageInterface {
 
     @Override
     public Mpa findMpaById(Integer mpaId) {
-        try {
-            Mpa mpa = jdbcTemplate.queryForObject("" +
+        return jdbcTemplate.queryForObject("" +
                             "SELECT mpa_id, mpa_name " +
                             "FROM MPA " +
                             "WHERE mpa_id = ?",
                     this::mapRowToMpa, mpaId);
-            return mpa;
-        } catch (EmptyResultDataAccessException exception) {
-            throw new ResponseStatusException(
-                    HttpStatus.resolve(404), "Object not Found");
-        }
     }
 
     public List<Mpa> findAllMpa() {

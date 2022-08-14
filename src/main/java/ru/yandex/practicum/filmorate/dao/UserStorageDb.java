@@ -36,57 +36,34 @@ public class UserStorageDb implements UserStorageInterface {
 
     @Override
     public User findUserById(Long id) {
-        try {
-            return jdbcTemplate.queryForObject("SELECT user_id, user_login, user_name, user_email, user_birthday " +
+        return jdbcTemplate.queryForObject("SELECT user_id, user_login, user_name, user_email, user_birthday " +
                     "FROM USERS " +
                     "WHERE user_id = ?", this::mapRowToUser, id);
-        } catch (EmptyResultDataAccessException exception) {
-            throw new ResponseStatusException(
-                    HttpStatus.resolve(404), "Object not Found");
         }
-    }
 
     @Override
     public User findUserByLogin(String login) {
-        try {
-            User user = jdbcTemplate.queryForObject("" +
+        return jdbcTemplate.queryForObject("" +
                         "SELECT user_id, user_login, user_name, user_email, user_birthday " +
                         "FROM USERS " +
                         "WHERE USER_LOGIN = ?",
                     this::mapRowToUser, login);
-            return user;
-        } catch (EmptyResultDataAccessException exception) {
-            throw new ResponseStatusException(
-                    HttpStatus.resolve(404), "Object not Found");
         }
-    }
 
     @Override
-    public User addUser(User newUser) {
-        try {
-            int result = jdbcTemplate.update("" +
+    public Integer addUser(User newUser) {
+        return jdbcTemplate.update("" +
                             "INSERT INTO USERS (user_name, user_email, user_login, user_birthday) " +
                             "VALUES (?,?,?,?)",
                     newUser.getName(),
                     newUser.getEmail(),
                     newUser.getLogin(),
                     newUser.getBirthday());
-            if (result > 0) {
-                return findUserByLogin(newUser.getLogin());
-            } else {
-                throw new ResponseStatusException(
-                        HttpStatus.resolve(400), "Object not Created");
-            }
-        } catch (Exception exception) {
-            throw new ResponseStatusException(
-                    HttpStatus.resolve(400), "Object not Created");
         }
-    }
 
     @Override
-    public User updateUser(User user) {
-        try {
-            int result = jdbcTemplate.update("UPDATE USERS " +
+    public Integer updateUser(User user) {
+        return jdbcTemplate.update("UPDATE USERS " +
                             "SET user_name=?, user_email=?, user_login=?, user_birthday=? " +
                             "WHERE user_id=?",
                     user.getName(),
@@ -94,49 +71,21 @@ public class UserStorageDb implements UserStorageInterface {
                     user.getLogin(),
                     user.getBirthday(),
                     user.getId());
-            if (result > 0) {
-                return findUserByLogin(user.getLogin());
-            } else {
-                throw new ResponseStatusException(
-                        HttpStatus.resolve(404), "");
-            }
-        } catch (Exception exception) {
-            throw new ResponseStatusException(
-                    HttpStatus.resolve(404), "");
         }
-    }
 
     @Override
-    public void deleteUserById(Long id) {
-        try {
-            int result = jdbcTemplate.update("DELETE FROM users " +
+    public Integer deleteUserById(Long id) {
+        return jdbcTemplate.update("DELETE FROM users " +
                     "WHERE user_id = ?", id);
-            if (result == 0) {
-                throw new ResponseStatusException(
-                        HttpStatus.resolve(404), "Object not Found");
-            }
-        } catch (EmptyResultDataAccessException exception) {
-            throw new ResponseStatusException(
-                    HttpStatus.resolve(400),"");
         }
-    }
 
     @Override
-    public void addFriend(Long userId, Long friendId) {
-        try {
-            int result = jdbcTemplate.update("INSERT INTO USERS_FRIENDS (user_id, FRIEND_ID) " +
+    public Integer addFriend(Long userId, Long friendId) {
+        return jdbcTemplate.update("INSERT INTO USERS_FRIENDS (user_id, FRIEND_ID) " +
                             "VALUES (?,?)",
                              userId,
                              friendId);
-            if (result == 0) {
-                throw new ResponseStatusException(
-                        HttpStatus.resolve(404), "");
-            }
-        } catch (Exception exception) {
-            throw new ResponseStatusException(
-                    HttpStatus.resolve(404), "");
         }
-    }
 
     @Override
     public List<User> findFriends(Long userId) {
@@ -160,21 +109,12 @@ public class UserStorageDb implements UserStorageInterface {
     }
 
     @Override
-    public void deleteFriend(Long userId, Long friendId) {
-        try {
-            int result = jdbcTemplate.update("DELETE FROM users_friends " +
+    public Integer deleteFriend(Long userId, Long friendId) {
+        return jdbcTemplate.update("DELETE FROM users_friends " +
                     "WHERE user_id IN (?,?) " +
                     "AND friend_id IN (?,?);",
                 userId, friendId, userId, friendId);
-            if (result == 0) {
-                throw new ResponseStatusException(
-                        HttpStatus.resolve(404), "Object not Found");
-            }
-        } catch (EmptyResultDataAccessException exception) {
-            throw new ResponseStatusException(
-                    HttpStatus.resolve(400),"");
         }
-    }
 
     @Override
     public List viewListObjects() {

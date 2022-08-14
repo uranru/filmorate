@@ -36,7 +36,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public User findObject(@PathVariable Long id) {
-        User object = (User) userService.findObject(id);
+        User object = (User) userService.findUserById(id);
         log.info("Запрошен объект: {}",object);
         return object;
     }

@@ -2,7 +2,10 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.dao.UserStorageDb;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -18,8 +21,13 @@ public class UserService {
         this.userStorage = storage;
     }
 
-    public User findObject(Long id) {
-        return userStorage.findUserById(id);
+    public User findUserById(Long id) {
+        try {
+            return userStorage.findUserById(id);
+        } catch (Exception exception) {
+            throw new ResponseStatusException(
+                 HttpStatus.resolve(404), "");
+        }
     }
 
     public List<User> findAllObjects() {
@@ -28,14 +36,36 @@ public class UserService {
 
     public User addUser(User user) {
         incomingObjectValidation(user);
-        return userStorage.addUser(user);
+        if (userStorage.addUser(user) > 0) {
+            return userStorage.findUserByLogin(user.getLogin());
+        } else {
+            throw new ResponseStatusException(
+                    HttpStatus.resolve(400), "");
+        }
     }
 
-    public User updateObject(User object) { return userStorage.updateUser(object); }
-    public void deleteObjectById(Long id) { userStorage.deleteUserById(id); }
+    public User updateObject(User user) {
+        if (userStorage.updateUser(user) > 0) {
+            return userStorage.findUserByLogin(user.getLogin());
+        } else {
+            throw new ResponseStatusException(
+                    HttpStatus.resolve(404), "");
+        }
+    }
+    public void deleteObjectById(Long id) {
+        if (userStorage.deleteUserById(id) == 0) {
+            throw new ResponseStatusException(
+                    HttpStatus.resolve(400), "");
+        }
+    }
 
     public void addFriend(Long userId, Long friendId){
-        userStorage.addFriend(userId,friendId);
+        try {
+            userStorage.addFriend(userId,friendId);
+        }   catch (Exception exception) {
+                throw new ResponseStatusException(
+                    HttpStatus.resolve(404), "");
+        }
     }
 
     public List<User> findFriends(Long userId){

@@ -10,7 +10,7 @@ public interface FilmStorageInterface {
 
     List<Film> findAllFilms();
 
-    Film addFilm(Film newFilm);
+    Integer addFilm(Film newFilm);
 
     Film findFilmByName(String filmName);
 
@@ -18,9 +18,9 @@ public interface FilmStorageInterface {
 
     List<Film> findPopularFilms(Integer countFilms);
 
-    void deleteFilmById(Long filmId);
+    Integer deleteFilmById(Long filmId);
 
-    Film updateFilm(Film film);
+    Integer updateFilm(Film film);
 
     void addLike(Long filmId,Long userId);
 
